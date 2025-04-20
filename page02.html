@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <link rel="icon" href="https://res.cloudinary.com/dl167vevk/image/upload/v1745149841/Logo_hus8pm.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>ZaiRex</title>
-  <link rel="icon" href="Image Web/Image Logo.png">
   <style>
     * {
       scroll-behavior: smooth;
@@ -107,7 +107,7 @@
     }
 
     section {
-      padding: 40px 40px; /* Reduced top padding */
+      padding: 40px;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
@@ -116,11 +116,29 @@
       text-align: center;
     }
 
+    .image-container {
+      position: relative;
+    }
+
     .image-container img {
       width: 100%;
       max-width: 1280px;
       height: auto;
       border-radius: 12px;
+      opacity: 0;
+      animation: fadeInImage 1.2s ease forwards;
+    }
+
+    @keyframes fadeInImage {
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .loading {
+      filter: blur(10px);
+      transform: scale(1.1);
     }
 
     .countdown {
@@ -146,7 +164,6 @@
     }
 
     .remaining-clicks {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       margin-top: 10px;
       font-size: 18px;
       color: #ffcc00;
@@ -170,21 +187,26 @@
     <a href="index.html" class="logo">ZaiRex</a>
     <div class="menu-toggle" onclick="toggleSidebar()">☰</div>
     <nav>
-      <a href="index.html#top">Home</a>
-      <a href="index.html#about">About</a>
-      <a href="index.html#contact">Contact</a>
+      <a href="#top">Home</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
     </nav>
   </header>
 
   <div class="sidebar" id="sidebar">
-    <a href="index.html#top" onclick="toggleSidebar()">Home</a>
-    <a href="index.html#about" onclick="toggleSidebar()">About</a>
-    <a href="index.html#contact" onclick="toggleSidebar()">Contact</a>
+    <a href="#top" onclick="toggleSidebar()">Home</a>
+    <a href="#about" onclick="toggleSidebar()">About</a>
+    <a href="#contact" onclick="toggleSidebar()">Contact</a>
   </div>
 
   <section id="top">
     <div class="image-container">
-      <img src="https://res.cloudinary.com/dl167vevk/image/upload/v1745149842/Tumbaile_Templaet_bf6uq6.png" alt="Main Image" />
+      <img 
+        id="mainImage"
+        class="loading"
+        src="https://res.cloudinary.com/dl167vevk/image/upload/v1745149842/Tumbaile_Templaet_bf6uq6.png" 
+        alt="Main Image" 
+      />
     </div>
 
     <div class="countdown" id="countdown">00:12</div>
@@ -202,7 +224,13 @@
       document.getElementById("sidebar").classList.toggle("active");
     }
 
-    // Smooth countdown
+    // Image loading animation control
+    const mainImage = document.getElementById('mainImage');
+    mainImage.addEventListener('load', () => {
+      mainImage.classList.remove('loading');
+    });
+
+    // Countdown logic
     let totalSeconds = 12;
     const countdownEl = document.getElementById("countdown");
     const downloadSection = document.getElementById("downloadSection");
@@ -239,10 +267,8 @@
       if (clickCount < links.length) {
         const url = links[clickCount];
         if (clickCount === 4) {
-          // 5th click - same page
           window.location.href = url;
         } else {
-          // 1st to 4th clicks - new tab
           window.open(url, '_blank');
         }
         clickCount++;
