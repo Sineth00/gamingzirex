@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <link rel="icon" href="https://res.cloudinary.com/dl167vevk/image/upload/v1745149841/Logo_hus8pm.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>ZaiRex</title>
+  <link rel="icon" href="Image Web/Image Logo.png">
   <style>
     * {
       scroll-behavior: smooth;
@@ -107,7 +107,7 @@
     }
 
     section {
-      padding: 40px;
+      padding: 40px 40px;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
@@ -116,29 +116,40 @@
       text-align: center;
     }
 
-    .image-container {
+    .image-wrapper {
       position: relative;
-    }
-
-    .image-container img {
       width: 100%;
       max-width: 1280px;
+    }
+
+    .image-wrapper img {
+      width: 100%;
       height: auto;
       border-radius: 12px;
       opacity: 0;
-      animation: fadeInImage 1.2s ease forwards;
+      transition: opacity 1s ease;
     }
 
-    @keyframes fadeInImage {
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
+    .image-wrapper img.loaded {
+      opacity: 1;
     }
 
-    .loading {
-      filter: blur(10px);
-      transform: scale(1.1);
+    .loader {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      border: 6px solid #f3f3f3;
+      border-top: 6px solid #00ffff;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: translate(-50%, -50%) rotate(0deg); }
+      100% { transform: translate(-50%, -50%) rotate(360deg); }
     }
 
     .countdown {
@@ -164,6 +175,7 @@
     }
 
     .remaining-clicks {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       margin-top: 10px;
       font-size: 18px;
       color: #ffcc00;
@@ -200,13 +212,9 @@
   </div>
 
   <section id="top">
-    <div class="image-container">
-      <img 
-        id="mainImage"
-        class="loading"
-        src="https://res.cloudinary.com/dl167vevk/image/upload/v1745149842/Tumbaile_Templaet_bf6uq6.png" 
-        alt="Main Image" 
-      />
+    <div class="image-wrapper">
+      <div class="loader" id="imageLoader"></div>
+      <img id="mainImage" src="https://res.cloudinary.com/dl167vevk/image/upload/v1745149842/Tumbaile_Templaet_bf6uq6.png" alt="Main Image" />
     </div>
 
     <div class="countdown" id="countdown">00:12</div>
@@ -224,13 +232,7 @@
       document.getElementById("sidebar").classList.toggle("active");
     }
 
-    // Image loading animation control
-    const mainImage = document.getElementById('mainImage');
-    mainImage.addEventListener('load', () => {
-      mainImage.classList.remove('loading');
-    });
-
-    // Countdown logic
+    // Countdown timer
     let totalSeconds = 12;
     const countdownEl = document.getElementById("countdown");
     const downloadSection = document.getElementById("downloadSection");
@@ -238,11 +240,9 @@
     const timer = setInterval(() => {
       const minutes = Math.floor(totalSeconds / 60);
       const seconds = totalSeconds % 60;
-
       countdownEl.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
       countdownEl.style.opacity = "0.6";
       setTimeout(() => countdownEl.style.opacity = "1", 200);
-
       totalSeconds--;
 
       if (totalSeconds < 0) {
@@ -276,6 +276,15 @@
         remainingClicks.textContent = `Remaining Clicks: ${remaining}`;
       }
     }
+
+    // Image loading animation logic
+    const img = document.getElementById("mainImage");
+    const loader = document.getElementById("imageLoader");
+
+    img.onload = () => {
+      loader.style.display = 'none';
+      img.classList.add('loaded');
+    };
   </script>
 </body>
 </html>
